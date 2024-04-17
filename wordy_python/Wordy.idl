@@ -1,0 +1,73 @@
+module wordy_idl {
+
+    // Exception definitions
+    exception InvalidPasswordException {};
+    exception NoUserFoundException {};
+    exception LoggedInException {};
+    exception IncompleteCredentialsException {};
+    exception NoPlayersJoinedException {};
+    exception NoGameFoundException {};
+    exception InvalidWordException {};
+    exception WordLengthException {};
+    exception WrongLetterException {};
+    exception PendingGameException {};
+    exception NoWinnerException {};
+
+    // Definitions for the list of strings pertaining to the best players and longest words
+    typedef sequence<string> playerRecord;
+    typedef sequence<playerRecord> bestPlayers;
+    typedef sequence<playerRecord> longestWords;
+    typedef sequence<char> randomLetters;
+    typedef sequence<playerRecord> usersAndWins;
+
+
+    // Interface for the Game Menu Servant object
+    interface GameMenuServant {
+
+    long logIn(in string username, in string password) raises (InvalidPasswordException, NoUserFoundException,
+        LoggedInException, IncompleteCredentialsException);
+
+    long createGame(in long userId);
+
+    long joinGame(in long userId) raises (NoGameFoundException);
+
+    bestPlayers getBestPlayers();
+
+    longestWords getLongestWords();
+
+    void logOut(in string username);
+    };
+
+    // Interface for a Game object when a player joins a game
+    interface GameServant {
+
+    boolean gameCanStart() raises(NoPlayersJoinedException, PendingGameException);
+
+    boolean gameIsFinished();
+
+    void submitWord(in long userId, in string word) raises (InvalidWordException, WordLengthException,
+        WrongLetterException);
+
+    long checkPlayerCount();
+
+    long long getRemainingPendingTime();
+
+    long long getRemainingReadyTime();
+
+    long long getRemainingRoundTime();
+
+    long long getRemainingResultsTime();
+
+    string getRoundWinnerName();
+
+    void leaveGame(in long playerId);
+
+    boolean youAreWinner(in long playerId) raises (NoWinnerException);
+
+
+    usersAndWins getUsersAndWins();
+
+    randomLetters getLetters();
+
+    };
+};
